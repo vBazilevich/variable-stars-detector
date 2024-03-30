@@ -1,0 +1,1 @@
+# variable-stars-detector
