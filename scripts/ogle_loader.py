@@ -40,7 +40,9 @@ def load_tarball(path, url_pfx, directory, vt, forked=False):
 
 
     with tarfile.open(filepath) as f:
-        i_phot = [tarinfo for tarinfo in f.getmembers() if tarinfo.name.startswith('phot/I/')]
+        # dn is different - only I band photometry without a band-specific subfolder
+        phot_dir = 'phot/I/' if vt != 'dn' else 'phot/'
+        i_phot = [tarinfo for tarinfo in f.getmembers() if tarinfo.name.startswith(phot_dir)]
         for dat in i_phot:
             dat.name = os.path.basename(dat.name)
             f.extract(dat, path)
