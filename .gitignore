@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Extracted datasets
-data/OGLE3/*/
+data/
