@@ -5,6 +5,7 @@ requests
 numpy
 scikit-learn==1.4.2
 torch==2.2.1
+torchvision
 torchaudio
 fastapi
 uvicorn
@@ -12,3 +13,4 @@ python-multipart
 python-dotenv
 aiogram
 httpx
+prettytable

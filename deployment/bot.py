@@ -4,9 +4,12 @@ import io
 import logging
 from dotenv import load_dotenv
 import asyncio
+import aiogram
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 import httpx
+import prettytable as pt
+import json
 
 
 load_dotenv()
@@ -30,8 +33,17 @@ async def files_handler(message, bot: Bot):
     async with httpx.AsyncClient() as client:
         files = {'file': file}
         rf_request = client.post('http://localhost:14001/predict', files=files)
+        resnet_request = client.post('http://localhost:14002/predict', files=files)
 
-        await message.answer(f'Random forest: {(await rf_request).text}')
+        # TODO: check response code before parsing
+        rf_request = json.loads((await rf_request).text)
+        resnet_request = json.loads((await resnet_request).text)
+
+        table = pt.PrettyTable(['Class', 'Random Forest', 'ResNet'], float_format='.3')
+        for var_class in rf_request.keys():
+            table.add_row([var_class, rf_request[var_class], resnet_request[var_class]])
+
+        await message.answer(f'```{table}```', parse_mode='MarkdownV2')
 
 @dp.message()
 async def default_handler(message):
