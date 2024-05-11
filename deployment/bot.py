@@ -30,7 +30,7 @@ async def files_handler(message, bot: Bot):
     await message.answer('File is received... Starting processing')
 
     # Send request to RF
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=None) as client:
         files = {'file': file}
         rf_request = client.post('http://localhost:14001/predict', files=files)
         resnet_request = client.post('http://localhost:14002/predict', files=files)
