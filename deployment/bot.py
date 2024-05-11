@@ -40,10 +40,20 @@ async def files_handler(message, bot: Bot):
         resnet_request = json.loads((await resnet_request).text)
 
         table = pt.PrettyTable(['Class', 'Random Forest', 'ResNet'], float_format='.3')
-        for var_class in rf_request.keys():
-            table.add_row([var_class, rf_request[var_class], resnet_request[var_class]])
+        for var_class in rf_request['probas'].keys():
+            table.add_row([var_class, rf_request['probas'][var_class], resnet_request[var_class]])
 
-        await message.answer(f'```{table}```', parse_mode='MarkdownV2')
+        top_5_features = sorted(rf_request['explanations'].items(), key=lambda x: abs(x[1]), reverse=True)[:5]
+
+        table_feats = pt.PrettyTable(['Feature', 'SHAP'], float_format='.3')
+        for feat, shap in top_5_features:
+            table_feats.add_row([feat, shap])
+
+        await message.answer(f'''```{table}```\n\n
+Top important features:
+```{table_feats}```
+                             ''',
+                             parse_mode='MarkdownV2')
 
 @dp.message()
 async def default_handler(message):
